@@ -106,7 +106,8 @@ public class CodeGenerator {
                             (String) settingsMap.get(Constant.JDBC_USER),
                             (String) settingsMap.get(Constant.JDBC_PASSWORD),
                             (String) settingsMap.get(Constant.JDBC_REMARKSREPORTING));
-            List<String> tableList = getTables(conn);
+            List<String> tableList =
+                    getTables(conn, (String) settingsMap.get(Constant.JDBC_SCHEMA));
             for (String tableName : tableList) {
                 System.out.println("解析" + tableName + "表");
                 String className = table2Entity(tableName);
@@ -317,16 +318,26 @@ public class CodeGenerator {
         info.setProperty("user", user);
         info.setProperty("password", password);
         info.setProperty("remarksReporting", remarksReporting);
+        if ("sys".equals(user)) {
+            info.setProperty("internal_logon", "sysdba");
+        }
         Connection conn = DriverManager.getConnection(url, info);
         return conn;
     }
 
     public static List<String> getTables(Connection conn) throws Exception {
+        return getTables(conn, null);
+    }
+
+    public static List<String> getTables(Connection conn, String schema) throws Exception {
         DatabaseMetaData dbmd = conn.getMetaData();
         List<String> tableList = new ArrayList<String>();
         ResultSet rs = null;
         String[] typeList = new String[] {"TABLE"};
-        rs = dbmd.getTables(null, dbmd.getUserName(), null, typeList);
+        if (schema == null || "".equals(schema)) {
+            schema = dbmd.getUserName();
+        }
+        rs = dbmd.getTables(null, schema.toUpperCase(), null, typeList);
         for (boolean more = rs.next(); more; more = rs.next()) {
             String s = rs.getString("TABLE_NAME");
             String type = rs.getString("TABLE_TYPE");
