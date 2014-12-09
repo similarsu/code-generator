@@ -27,6 +27,7 @@ public class CodeGenerator {
         String packageDir = packageName.replaceAll("\\.", "/");
         String generatorSystemManager = (String) settingsMap.get(Constant.GENERATOR_SYSTEMMODULE);
         String parseDB = (String) settingsMap.get(Constant.PARSE_DB);
+        String jdbcType = (String) settingsMap.get(Constant.JDBC_TYPE);
         // 生成项目根目录
         String root = createDir(projectName);
         // 生成.settings文件夹
@@ -133,6 +134,7 @@ public class CodeGenerator {
                 entityMap.put("tableName", tableName.toLowerCase());
                 entityMap.put("className", className);
                 entityMap.put("columns", columns);
+                entityMap.put("jdbcType", jdbcType.toLowerCase());
 
                 daoMap.put("packageName", packageName);
                 daoMap.put("className", className);
@@ -366,15 +368,16 @@ public class CodeGenerator {
                 column.setIsPrivate(1);
             }
             String propType = null;
-            if ("number".equals(columnType)) {
+            if ("number".equals(columnType) || "int".equals(columnType)
+                    || "decimal".equals(columnType)) {
                 if (datasize == 32) {
                     propType = "Long";
                 } else {
                     propType = "Integer";
                 }
-            } else if ("varchar2".equals(columnType)) {
+            } else if ("varchar2".equals(columnType) || "varchar".equals(columnType)) {
                 propType = "String";
-            } else if ("date".equals(columnType)) {
+            } else if ("date".equals(columnType) || "datetime".equals(columnType)) {
                 propType = "Date";
             } else if ("clob".equals(columnType)) {
                 propType = "byte[]";

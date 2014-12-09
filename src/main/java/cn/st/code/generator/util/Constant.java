@@ -88,6 +88,7 @@ public class Constant {
     public static final String GENERATOR_SYSTEMMODULE = "generator_systemModule";
     public static final String PARSE_DB = "parse_db";
     public static final String PACKAGE = "package";
+    public static final String JDBC_TYPE = "jdbc_type";
     public static final String JDBC_DRIVER = "jdbc_driver";
     public static final String JDBC_URL = "jdbc_url";
     public static final String JDBC_USER = "jdbc_user";

@@ -29,8 +29,12 @@ public class ${className} implements Serializable {
 	<#list columns as column>
 	<#if column.isPrivate==1>
 	@Id
+	<#if jdbcType=="oracle">
 	@SequenceGenerator(name = "s_${tableName}", sequenceName = "s_${tableName}", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "s_${tableName}")
+	<#elseif jdbcType="mysql">
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	</#if>
 	public ${column.propType} get${column.propName?cap_first}() {
 		return ${column.propName};
 	}
