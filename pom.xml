@@ -18,6 +18,7 @@
 		<dependency>
 			<groupId>ojdbc</groupId>
 			<artifactId>ojdbc</artifactId>
+			<type>jar</type>
 			<version>14</version>
 		</dependency>
 

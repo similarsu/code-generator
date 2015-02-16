@@ -108,7 +108,8 @@ public class CodeGenerator {
                             (String) settingsMap.get(Constant.JDBC_PASSWORD),
                             (String) settingsMap.get(Constant.JDBC_REMARKSREPORTING));
             List<String> tableList =
-                    getTables(conn, (String) settingsMap.get(Constant.JDBC_SCHEMA));
+                    getTables(conn, (String) settingsMap.get(Constant.JDBC_SCHEMA),
+                            (String) settingsMap.get(Constant.JDBC_TABLES));
             for (String tableName : tableList) {
                 System.out.println("解析" + tableName + "表");
                 String className = table2Entity(tableName);
@@ -332,21 +333,33 @@ public class CodeGenerator {
     }
 
     public static List<String> getTables(Connection conn, String schema) throws Exception {
-        DatabaseMetaData dbmd = conn.getMetaData();
+        return getTables(conn, schema, null);
+    }
+
+    public static List<String> getTables(Connection conn, String schema, String tables)
+            throws Exception {
         List<String> tableList = new ArrayList<String>();
-        ResultSet rs = null;
-        String[] typeList = new String[] {"TABLE"};
-        if (schema == null || "".equals(schema)) {
-            schema = dbmd.getUserName();
+        if (tables != null && !tables.equals("")) {
+            for (String table : tables.split(",")) {
+                tableList.add(table);
+            }
+        } else {
+            DatabaseMetaData dbmd = conn.getMetaData();
+
+            ResultSet rs = null;
+            String[] typeList = new String[] {"TABLE"};
+            if (schema == null || "".equals(schema)) {
+                schema = dbmd.getUserName();
+            }
+            rs = dbmd.getTables(null, schema.toUpperCase(), null, typeList);
+            for (boolean more = rs.next(); more; more = rs.next()) {
+                String s = rs.getString("TABLE_NAME");
+                String type = rs.getString("TABLE_TYPE");
+                System.out.println(rs.getString("REMARKS"));
+                if (type.equalsIgnoreCase("table") && s.indexOf("$") == -1) tableList.add(s);
+            }
+            rs.close();
         }
-        rs = dbmd.getTables(null, schema.toUpperCase(), null, typeList);
-        for (boolean more = rs.next(); more; more = rs.next()) {
-            String s = rs.getString("TABLE_NAME");
-            String type = rs.getString("TABLE_TYPE");
-            System.out.println(rs.getString("REMARKS"));
-            if (type.equalsIgnoreCase("table") && s.indexOf("$") == -1) tableList.add(s);
-        }
-        rs.close();
         return tableList;
     }
 

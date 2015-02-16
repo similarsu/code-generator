@@ -95,6 +95,7 @@ public class Constant {
     public static final String JDBC_PASSWORD = "jdbc_password";
     public static final String JDBC_REMARKSREPORTING = "jdbc_remarksReporting";
     public static final String JDBC_SCHEMA = "jdbc_schema";
+    public static final String JDBC_TABLES = "jdbc_tables";
     public static final String POM_ISMODULE = "pom_isModule";
     public static final String POM_GROUPID = "pom_groupId";
     public static final String POM_PARENT_ARTIFACTID = "pom_parent_artifactId";

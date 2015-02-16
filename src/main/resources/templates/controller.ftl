@@ -90,7 +90,7 @@ public class ${className}Controller extends BaseController{
 			@RequestParam(value = "pageSize", required = false, defaultValue = Constant.PAGE_SIZE) int pageSize,
 			ModelMap modelMap, @ModelAttribute ${className} ${className?uncap_first}) throws Exception {
 
-		Where where = Where.getInstance(${className?uncap_first})<#list columns as column><#if column.isPrivate!=1>.equal("${className?uncap_first}.${column.propName}", ${className?uncap_first}.get${column.propName?cap_first}()</#if></#list>);
+		Where where = Where.getInstance(${className?uncap_first})<#list columns as column><#if column.isPrivate!=1>.equal("${className?uncap_first}.${column.propName}", ${className?uncap_first}.get${column.propName?cap_first}())</#if></#list>);
 		Pager<${className}> pager = new Pager<${className}>(pageNo, pageSize, where);
 
 		pager = ${className?uncap_first}Service.findPage(pager);
