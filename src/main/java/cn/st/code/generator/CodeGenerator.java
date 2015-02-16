@@ -351,7 +351,7 @@ public class CodeGenerator {
             DatabaseMetaData dbmd = conn.getMetaData();
 
             ResultSet rs = null;
-            String[] typeList = new String[] {"VIEW"};
+            String[] typeList = new String[] {"TABLE", "VIEW"};
             if (schema == null || "".equals(schema)) {
                 schema = dbmd.getUserName();
             }
