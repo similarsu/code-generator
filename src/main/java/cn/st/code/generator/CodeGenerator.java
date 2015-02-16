@@ -28,6 +28,10 @@ public class CodeGenerator {
         String generatorSystemManager = (String) settingsMap.get(Constant.GENERATOR_SYSTEMMODULE);
         String parseDB = (String) settingsMap.get(Constant.PARSE_DB);
         String jdbcType = (String) settingsMap.get(Constant.JDBC_TYPE);
+        String delPath =
+                CodeGenerator.class.getClassLoader().getResource("output").getPath() + "/"
+                        + projectName;
+        deleteFile(new File(delPath));
         // 生成项目根目录
         String root = createDir(projectName);
         // 生成.settings文件夹
@@ -347,7 +351,7 @@ public class CodeGenerator {
             DatabaseMetaData dbmd = conn.getMetaData();
 
             ResultSet rs = null;
-            String[] typeList = new String[] {"TABLE"};
+            String[] typeList = new String[] {"VIEW"};
             if (schema == null || "".equals(schema)) {
                 schema = dbmd.getUserName();
             }
@@ -356,7 +360,8 @@ public class CodeGenerator {
                 String s = rs.getString("TABLE_NAME");
                 String type = rs.getString("TABLE_TYPE");
                 System.out.println(rs.getString("REMARKS"));
-                if (type.equalsIgnoreCase("table") && s.indexOf("$") == -1) tableList.add(s);
+                if ((type.equalsIgnoreCase("table") || type.equalsIgnoreCase("view"))
+                        && s.indexOf("$") == -1) tableList.add(s);
             }
             rs.close();
         }
@@ -471,4 +476,15 @@ public class CodeGenerator {
         createFileWithFtl(serviceImplMap, Constant.FTL_SERVICE_IMPL, root, className
                 + "ServiceImpl.java");
     }
+
+    public static void deleteFile(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (File f : files) {
+                deleteFile(f);
+            }
+        }
+        file.delete();
+    }
+
 }
