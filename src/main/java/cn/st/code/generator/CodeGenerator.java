@@ -111,13 +111,13 @@ public class CodeGenerator {
                             (String) settingsMap.get(Constant.JDBC_USER),
                             (String) settingsMap.get(Constant.JDBC_PASSWORD),
                             (String) settingsMap.get(Constant.JDBC_REMARKSREPORTING));
+            String schema = (String) settingsMap.get(Constant.JDBC_SCHEMA);
             List<String> tableList =
-                    getTables(conn, (String) settingsMap.get(Constant.JDBC_SCHEMA),
-                            (String) settingsMap.get(Constant.JDBC_TABLES));
+                    getTables(conn, schema, (String) settingsMap.get(Constant.JDBC_TABLES));
             for (String tableName : tableList) {
                 System.out.println("解析" + tableName + "表");
                 String className = table2Entity(tableName);
-                List<Column> columns = getColumnsByTableName(conn, tableName);
+                List<Column> columns = getColumnsByTableName(conn, schema, tableName);
 
                 Map<String, Object> controllerMap = new HashMap<String, Object>();
                 Map<String, Object> entityMap = new HashMap<String, Object>();
@@ -345,7 +345,7 @@ public class CodeGenerator {
         List<String> tableList = new ArrayList<String>();
         if (tables != null && !tables.equals("")) {
             for (String table : tables.split(",")) {
-                tableList.add(table);
+                tableList.add(table.toUpperCase());
             }
         } else {
             DatabaseMetaData dbmd = conn.getMetaData();
@@ -359,7 +359,6 @@ public class CodeGenerator {
             for (boolean more = rs.next(); more; more = rs.next()) {
                 String s = rs.getString("TABLE_NAME");
                 String type = rs.getString("TABLE_TYPE");
-                System.out.println(rs.getString("REMARKS"));
                 if ((type.equalsIgnoreCase("table") || type.equalsIgnoreCase("view"))
                         && s.indexOf("$") == -1) tableList.add(s);
             }
@@ -368,10 +367,13 @@ public class CodeGenerator {
         return tableList;
     }
 
-    public static List<Column> getColumnsByTableName(Connection conn, String tableName)
-            throws Exception {
+    public static List<Column> getColumnsByTableName(Connection conn, String schema,
+            String tableName) throws Exception {
         DatabaseMetaData dbmd = conn.getMetaData();
-        ResultSet colRet = dbmd.getColumns(null, "%", tableName, "%");
+        if (schema == null || "".equals(schema)) {
+            schema = dbmd.getUserName();
+        }
+        ResultSet colRet = dbmd.getColumns(null, schema.toUpperCase(), tableName, "%");
         List<Column> columns = new ArrayList<Column>();
         while (colRet.next()) {
             String columnName = colRet.getString("COLUMN_NAME").toLowerCase();
