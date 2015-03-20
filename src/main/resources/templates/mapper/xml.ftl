@@ -41,17 +41,7 @@
 		<selectKey order="BEFORE" keyProperty="id" resultType="long">
 			select s_${tableName}.nextval from dual
 		</selectKey>
-		<![CDATA[
-			insert into ${tableName}(
-		]]>
-			<#list columns as column><if test="${column.propName}!=null">${column.columnName}<#if column_has_next>,</#if></if></#list>
-		<![CDATA[
-			) values(
-		]]>
-			<#list columns as column><if test="${column.propName}!=null">${r"#{"}${column.propName}${r"}"}<#if column_has_next>,</#if></if></#list>
-		<![CDATA[
-			)
-		]]>
+		insert into ${tableName}(<#list columns as column>${column.columnName}<#if column_has_next>,</#if></#list>) values(<#list columns as column>${r"#{"}${column.propName}${r"}"}<#if column_has_next>,</#if></#list>)
 	</insert>
 	
 	<delete id="delete" parameterType="long">
