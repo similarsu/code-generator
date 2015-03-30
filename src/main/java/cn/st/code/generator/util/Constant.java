@@ -86,6 +86,7 @@ public class Constant {
     public static final String PROJECT_NAME = "project_name";
     public static final String ECLIPSE_ENCODING = "eclipse_encoding";
     public static final String GENERATOR_SYSTEMMODULE = "generator_systemModule";
+    public static final String GENERATOR_MYBATIS = "generator_mybatis";
     public static final String PARSE_DB = "parse_db";
     public static final String PACKAGE = "package";
     public static final String JDBC_TYPE = "jdbc_type";

@@ -26,6 +26,7 @@ public class CodeGenerator {
         String packageName = (String) settingsMap.get(Constant.PACKAGE);
         String packageDir = packageName.replaceAll("\\.", "/");
         String generatorSystemManager = (String) settingsMap.get(Constant.GENERATOR_SYSTEMMODULE);
+        String generatorMybatis = (String) settingsMap.get(Constant.GENERATOR_MYBATIS);
         String parseDB = (String) settingsMap.get(Constant.PARSE_DB);
         String jdbcType = (String) settingsMap.get(Constant.JDBC_TYPE);
         String delPath =
@@ -177,15 +178,17 @@ public class CodeGenerator {
                         + "Service.java");
                 createFileWithFtl(serviceImplMap, Constant.FTL_SERVICE_IMPL, serviceImplRoot,
                         className + "ServiceImpl.java");
+                if ("true".equals(generatorMybatis)) {
+                    createFileWithFtl(mapperEntityMap, Constant.FTL_MAPPER_ENTITY, mapperRoot,
+                            className + ".java");
 
-                createFileWithFtl(mapperEntityMap, Constant.FTL_MAPPER_ENTITY, mapperRoot,
-                        className + ".java");
+                    createFileWithFtl(mapperMapperMap, Constant.FTL_MAPPER_MAPPER, mapperRoot,
+                            className + "Mapper.java");
 
-                createFileWithFtl(mapperMapperMap, Constant.FTL_MAPPER_MAPPER, mapperRoot,
-                        className + "Mapper.java");
+                    createFileWithFtl(mapperXmlMap, Constant.FTL_MAPPER_XML, mapperRoot, className
+                            + "Mapper.xml");
+                }
 
-                createFileWithFtl(mapperXmlMap, Constant.FTL_MAPPER_XML, mapperRoot, className
-                        + "Mapper.xml");
             }
             conn.close();
         }
